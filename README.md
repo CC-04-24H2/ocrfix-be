@@ -8,8 +8,6 @@ OCRfix is a simple backend hands-on project. The goals of OCRfix is give a fixin
 
 ## Tech Stack
 
-### Programming Language
-
 | Name                                                                    | Scope                     | Description                                                          |
 | ----------------------------------------------------------------------- | ------------------------- | -------------------------------------------------------------------- |
 | [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)   | programming language      | main programming language                                            |
