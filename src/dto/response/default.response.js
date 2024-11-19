@@ -1,7 +1,7 @@
 class Response {
   static defaultOK(message, data) {
     const res = {
-      status: true,
+      status: 'success',
       code: 200,
       message,
       data,
@@ -11,7 +11,7 @@ class Response {
 
   static defaultCreated(message, data) {
     const res = {
-      status: true,
+      status: 'success',
       code: 201,
       message,
       data,
@@ -21,7 +21,7 @@ class Response {
 
   static defaultBadRequest(error) {
     const res = {
-      status: false,
+      status: 'failed',
       code: 400,
       message: 'Bad request',
       error,
@@ -31,7 +31,7 @@ class Response {
 
   static defaultUnauthorized(error) {
     const res = {
-      status: false,
+      status: 'failed',
       code: 401,
       message: 'Unauthorized',
       error,
@@ -41,7 +41,7 @@ class Response {
 
   static defaultForbidden(error) {
     const res = {
-      status: false,
+      status: 'failed',
       code: 403,
       message: 'Forbidden',
       error,
@@ -51,7 +51,7 @@ class Response {
 
   static defaultNotFound(error) {
     const res = {
-      status: false,
+      status: 'failed',
       code: 404,
       message: 'Not found',
       error,
@@ -61,7 +61,7 @@ class Response {
 
   static defaultInternalError(error) {
     const res = {
-      status: false,
+      status: 'failed',
       code: 500,
       message: 'Internal error',
       error,
