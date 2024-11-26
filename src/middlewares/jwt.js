@@ -4,9 +4,7 @@ const { User } = require('../models');
 
 const createToken = (payload, expiresIn) => {
   const secret = process.env.JWT_SIGNKEY;
-  const result = jwt.sign({
-    data: payload,
-  }, secret, { expiresIn });
+  const result = jwt.sign(payload, secret, { expiresIn });
   return result;
 };
 
@@ -39,7 +37,7 @@ const verifyToken = async (req, res, next) => {
   const user = await User.findByPk(decodedToken.id);
 
   if (user === null) {
-    response = Response.defaultForbidden('no access to resources');
+    response = Response.defaultUnauthorized('invalid credentials');
     return res.status(response.code).json(response);
   }
   res.locals.decodedToken = decodedToken;

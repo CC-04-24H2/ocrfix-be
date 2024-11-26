@@ -37,6 +37,15 @@ class AuthValidator extends Validator {
     const result = schema.validate(this.body);
     return Validator.getErrorList(result);
   }
+
+  validateRefresh() {
+    const schema = Joi.object({
+      refresh_token: Joi.string().required(),
+    });
+
+    const result = schema.validate(this.body);
+    return Validator.getErrorList(result);
+  }
 }
 
 module.exports = AuthValidator;
