@@ -22,8 +22,7 @@ module.exports = {
     ecmaVersion: 'latest',
   },
   rules: {
-    'import/no-dynamic-require': 'off',
-    'global-require': 'off',
     'import/no-extraneous-dependencies': 'off',
   },
+
 };
