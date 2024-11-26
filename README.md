@@ -22,6 +22,8 @@ OCRfix is a simple backend hands-on project. The goals of OCRfix is give a fixin
 | [uuid](https://www.npmjs.com/package/uuid)                              | UUID library              | provide UUIDv7 for this project                                      |
 | [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)              | JWT library               | generate and verivy JWT for authentication                           |
 | [ESLint](https://eslint.org/)                                           | JS linter                 | make sure your JS code consistent (this project use Airbnb standard) |
+| [form-data](https://www.npmjs.com/package/form-data) | Form data request | generate form data as request body in axios |
+| [@google-cloud/storage](https://www.npmjs.com/package/@google-cloud/storage) | Cloud Storage client library | connect to GCS from Node.js |
 
 ## How to Run
 
