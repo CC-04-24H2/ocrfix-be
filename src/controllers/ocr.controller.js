@@ -91,4 +91,28 @@ const createHandler = (req, res) => {
   });
 };
 
-module.exports = { predictHandler, createHandler };
+const getAllHandler = async (req, res) => {
+  const { decodedToken } = res.locals;
+
+  try {
+    let ocrs = await OcrPrediction.findAll({
+      attributes: ['id', ['image_path', 'image'], ['createdAt', 'created_at']],
+      where: {
+        user_id: decodedToken.id,
+      },
+    });
+
+    ocrs = ocrs.map((ocr) => ({
+      ...ocr.dataValues,
+      image: `https://storage.googleapis.com/${process.env.BUCKET_NAME}/${ocr.dataValues.image}`,
+    }));
+
+    const response = Response.defaultOK('Success get OCRfix', { ocrs });
+    return res.status(response.code).json(response);
+  } catch (error) {
+    const response = Response.defaultInternalError(error.message);
+    return res.status(response.code).json(response);
+  }
+};
+
+module.exports = { predictHandler, createHandler, getAllHandler };
