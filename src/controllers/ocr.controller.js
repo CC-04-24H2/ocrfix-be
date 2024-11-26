@@ -205,6 +205,54 @@ const updateHandler = async (req, res) => {
   }
 };
 
+const deleteHandler = async (req, res) => {
+  const { decodedToken } = res.locals;
+  const { id } = req.params;
+
+  try {
+    const ocr = await OcrPrediction.findOne({
+      attributes: ['user_id'],
+      where: {
+        id,
+      },
+    });
+
+    if (!ocr) {
+      const response = Response.defaultNotFound([`record with id ${id} not found`]);
+      return res.status(response.code).json(response);
+    }
+
+    if (ocr.user_id !== decodedToken.id) {
+      const response = Response.defaultForbidden(['no access to resource']);
+      return res.status(response.code).json(response);
+    }
+
+    await sequelize.transaction(async (t) => {
+      await OcrDetail.destroy({
+        where: {
+          ocr_id: id,
+        },
+      }, { transaction: t });
+      await OcrPrediction.destroy({
+        where: {
+          id,
+        },
+      }, { transaction: t });
+    });
+
+    const response = Response.defaultOK('Delete OCRfix success');
+    return res.status(response.code).json(response);
+  } catch (error) {
+    const response = Response.defaultInternalError(error.message);
+    return res.status(response.code).json(response);
+  }
+};
+
 module.exports = {
-  predictHandler, createHandler, getAllHandler, getSingleHandler, updateHandler,
+  predictHandler,
+  createHandler,
+  getAllHandler,
+  getSingleHandler,
+  updateHandler,
+  deleteHandler,
 };
