@@ -1,5 +1,7 @@
 const { Router } = require('express');
-const { predictHandler, createHandler, getAllHandler } = require('../controllers/ocr.controller');
+const {
+  predictHandler, createHandler, getAllHandler, getSingleHandler,
+} = require('../controllers/ocr.controller');
 const { verifyToken } = require('../middlewares/jwt');
 
 const ocrRouter = Router();
@@ -7,5 +9,6 @@ const ocrRouter = Router();
 ocrRouter.post('/predict', predictHandler);
 ocrRouter.post('', verifyToken, createHandler);
 ocrRouter.get('', verifyToken, getAllHandler);
+ocrRouter.get('/:id', verifyToken, getSingleHandler);
 
 module.exports = ocrRouter;

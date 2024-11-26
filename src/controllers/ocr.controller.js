@@ -115,4 +115,47 @@ const getAllHandler = async (req, res) => {
   }
 };
 
-module.exports = { predictHandler, createHandler, getAllHandler };
+const getSingleHandler = async (req, res) => {
+  const { decodedToken } = res.locals;
+  const { id } = req.params;
+
+  try {
+    const ocr = await OcrPrediction.findOne({
+      attributes: ['user_id', ['image_path', 'image'], ['createdAt', 'created_at']],
+      where: {
+        id,
+      },
+    });
+
+    if (!ocr) {
+      const response = Response.defaultNotFound([`record with id ${id} not found`]);
+      return res.status(response.code).json(response);
+    }
+
+    if (ocr.user_id !== decodedToken.id) {
+      const response = Response.defaultForbidden(['no access to resource']);
+      return res.status(response.code).json(response);
+    }
+
+    const ocrDetails = await OcrDetail.findAll({
+      attributes: ['id', 'prediction', 'probability', 'actual'],
+      where: {
+        ocr_id: id,
+      },
+    });
+
+    const response = Response.defaultOK('success get OCRfix details', {
+      created_at: ocr.dataValues.created_at,
+      image: `https://storage.googleapis.com/${process.env.BUCKET_NAME}/${ocr.dataValues.image}`,
+      ocrDetails,
+    });
+    return res.status(response.code).json(response);
+  } catch (error) {
+    const response = Response.defaultInternalError(error.message);
+    return res.status(response.code).json(response);
+  }
+};
+
+module.exports = {
+  predictHandler, createHandler, getAllHandler, getSingleHandler,
+};
