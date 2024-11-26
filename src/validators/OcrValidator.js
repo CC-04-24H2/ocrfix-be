@@ -31,6 +31,26 @@ class OcrValidator extends Validator {
     const result = schema.validate(this.body);
     return Validator.getErrorList(result);
   }
+
+  validateUpdate() {
+    const arr = Joi.object({
+      detail_id: Joi.string()
+        .required(),
+      actual: Joi.string()
+        .min(1)
+        .max(1)
+        .required(),
+    });
+
+    const schema = Joi.object({
+      ocrs: Joi.array()
+        .items(arr)
+        .required(),
+    });
+
+    const result = schema.validate(this.body);
+    return Validator.getErrorList(result);
+  }
 }
 
 module.exports = OcrValidator;

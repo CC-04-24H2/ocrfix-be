@@ -156,6 +156,55 @@ const getSingleHandler = async (req, res) => {
   }
 };
 
+const updateHandler = async (req, res) => {
+  const { decodedToken } = res.locals;
+  const { id } = req.params;
+  const { body } = req;
+
+  const ocrValidator = new OcrValidator(body);
+  const bodyError = ocrValidator.validateUpdate();
+  if (bodyError.length !== 0) {
+    const response = Response.defaultBadRequest(bodyError);
+    return res.status(response.code).json(response);
+  }
+
+  try {
+    const ocr = await OcrPrediction.findOne({
+      attributes: ['user_id'],
+      where: {
+        id,
+      },
+    });
+
+    if (!ocr) {
+      const response = Response.defaultNotFound([`record with id ${id} not found`]);
+      return res.status(response.code).json(response);
+    }
+
+    if (ocr.user_id !== decodedToken.id) {
+      const response = Response.defaultForbidden(['no access to resource']);
+      return res.status(response.code).json(response);
+    }
+
+    const updatePromises = body.ocrs.map((o) => OcrDetail
+      .update({
+        actual: o.actual,
+      }, {
+        where: {
+          id: o.detail_id,
+          ocr_id: id,
+        },
+      }));
+    await Promise.all(updatePromises);
+
+    const response = Response.defaultOK('Update OCRfix success');
+    return res.status(response.code).json(response);
+  } catch (error) {
+    const response = Response.defaultInternalError(error.message);
+    return res.status(response.code).json(response);
+  }
+};
+
 module.exports = {
-  predictHandler, createHandler, getAllHandler, getSingleHandler,
+  predictHandler, createHandler, getAllHandler, getSingleHandler, updateHandler,
 };
