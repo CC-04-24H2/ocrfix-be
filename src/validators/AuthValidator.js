@@ -21,6 +21,22 @@ class AuthValidator extends Validator {
     const result = schema.validate(this.body);
     return Validator.getErrorList(result);
   }
+
+  validateLogin() {
+    const schema = Joi.object({
+      email: Joi.string()
+        .email()
+        .max(150)
+        .required(),
+      password: Joi.string()
+        .min(8)
+        .max(100)
+        .required(),
+    });
+
+    const result = schema.validate(this.body);
+    return Validator.getErrorList(result);
+  }
 }
 
 module.exports = AuthValidator;

@@ -2,7 +2,8 @@ const { v7: uuidv7 } = require('uuid');
 const { User } = require('../models');
 const AuthValidator = require('../validators/AuthValidator');
 const Response = require('../dto/response/default.response');
-const { createBcrypt } = require('../utils/bcrypt');
+const { createBcrypt, checkBcrypt } = require('../utils/bcrypt');
+const { createToken } = require('../middlewares/jwt');
 
 const registerHandler = async (req, res) => {
   const { body } = req;
@@ -33,4 +34,40 @@ const registerHandler = async (req, res) => {
   return res.status(response.code).json(response);
 };
 
-module.exports = { registerHandler };
+const loginHandler = async (req, res) => {
+  const { body } = req;
+  const authValidator = new AuthValidator(body);
+
+  const bodyError = authValidator.validateLogin();
+  if (bodyError.length !== 0) {
+    const response = Response.defaultBadRequest(bodyError);
+    return res.status(response.code).json(response);
+  }
+
+  const user = await User.findOne({
+    where: {
+      email: body.email,
+    },
+  });
+  if (!user) {
+    const response = Response.defaultUnauthorized('invalid login credentials');
+    return res.status(response.code).json(response);
+  }
+
+  const verifiedPass = await checkBcrypt(user.password, body.password);
+  if (!verifiedPass) {
+    const response = Response.defaultUnauthorized('invalid login credentials');
+    return res.status(response.code).json(response);
+  }
+
+  const accessToken = createToken({ id: user.id, email: user.email }, '4h');
+  const refreshToken = createToken({ id: user.id }, '15d');
+
+  const response = Response.defaultOK('Login success', {
+    access_token: accessToken,
+    refresh_token: refreshToken,
+  });
+  return res.status(response.code).json(response);
+};
+
+module.exports = { registerHandler, loginHandler };
