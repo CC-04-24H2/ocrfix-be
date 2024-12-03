@@ -28,7 +28,7 @@ const predictHandler = (req, res) => {
       });
 
       const mlRes = await axios.post(`${process.env.PREDICTION_ENDPOINT}/predict`, form);
-      mlRes.data = mlRes.data.map((d) => ({ probability: d.probabilty, ...d }));
+      mlRes.data = mlRes.data.map((d) => ({ probability: d.probabilty, prediction: d.prediction }));
 
       const response = Response.defaultOK('Get prediction success', { ocr: mlRes.data });
       return res.status(response.code).json(response);

@@ -11,7 +11,7 @@ const { verifyToken } = require('../middlewares/jwt');
 
 const ocrRouter = Router();
 
-ocrRouter.post('/predict', predictHandler);
+ocrRouter.post('/predict', verifyToken, predictHandler);
 ocrRouter.post('', verifyToken, createHandler);
 ocrRouter.get('', verifyToken, getAllHandler);
 ocrRouter.get('/:id', verifyToken, getSingleHandler);
